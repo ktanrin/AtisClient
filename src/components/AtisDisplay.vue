@@ -3,17 +3,17 @@
     <div class="mandatory column is-8">
       <h6 class="tag is-large is-light">VTBD - ARR ATIS</h6>
         <div class="time">
-          <p class= "first-p" v-if="receivedData && receivedData.atisTime">TIME</p>
+          <p class= "first-p">TIME</p>
           <input type="text" :style="{ width: '8ch' }" :value="receivedData && receivedData.atisTime" readonly class="input is-small custom-margin" />
-          <p v-if="receivedData && receivedData.metReportTime">MET AT</p>
+          <p>MET AT</p>
           <input type="text" :style="{ width: '8ch' }" :value="receivedData && receivedData.metReportTime" readonly class="input is-small custom-margin" />
         </div>
         <div class="apch">
-        <p class= "first-p" v-if="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'">APCH</p>
-        <input type="text" :value="receivedData && receivedData.appType" readonly class="input is-small custom-margin" />
+        <p class= "first-p" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'">APCH</p>
+        <input type="text" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'" :value="receivedData && receivedData.appType" readonly class="input is-small custom-margin" />
         </div>
         <div class="RWY">
-        <p class= "first-p" v-if="receivedData && receivedData.atisRWY">RWY</p>
+        <p class= "first-p">RWY</p>
         <input type="text" :style="{ width: '7ch' }" :value="receivedData && receivedData.atisRWY" readonly class="input is-small custom-margin" />
         <button :class="getLeftButtonClass()">{{ getLeftButtonLabel() }}</button>
         <button :class="getRightButtonClass()">{{ getRightButtonLabel() }}</button>
@@ -23,36 +23,36 @@
       <h3 v-if="receivedData && receivedData.atisInfo"> {{ receivedData.atisInfo }} </h3>
     </div>
     <div class="optional column is-12">
-      <div class="ws hide-on-short-windows" v-if="receivedData && receivedData.atisWS">
-        <p class= "first-p" v-if="receivedData && receivedData.atisWS">WS</p>
-        <input type="text" v-if="receivedData && receivedData.atisWS" readonly class="input is-warning is-small custom-margin" :value="receivedData && receivedData.atisWS"/>
+      <div class="ws hide-on-short-windows">
+        <p class= "first-p">WS</p>
+        <input type="text" readonly class="input is-small custom-margin" :class="{'is-warning': hasAtisWS()}" :value="receivedData && receivedData.atisWS"/>
       </div>
-      <div class="rcr hide-on-short-windows" v-if="receivedData && receivedData.rcrContent">
-        <p class= "first-p" v-if="receivedData && receivedData.rcrContent">RCR</p>
-        <textarea v-if="receivedData && receivedData.rcrContent" readonly class="textarea  is-warning custom-rcr is-small custom-margin" rows="2" :value="formattedRcrContent"></textarea>
+      <div class="rcr hide-on-short-windows">
+        <p class= "first-p">RCR</p>
+        <textarea readonly class="textarea custom-rcr is-small custom-margin"  :class="{'is-warning': hasAtisWS()}" rows="2" :value="formattedRcrContent"></textarea>
       </div>
       <div class="wind hide-on-short-windows">
         <p class= "first-p" v-if="receivedData && receivedData.windInfo">WIND</p>
         <input type="text" :value="receivedData && receivedData.windInfo" readonly class="input is-small custom-margin" />
       </div>     
       <div class="visibility">
-        <p class= "first-p" v-if="receivedData && receivedData.visibility">VIS</p>
-        <input type="text" :style="{ width: '10ch' }" :value="receivedData && receivedData.visibility" readonly class="input is-small custom-margin" />  
+        <p class= "first-p">VIS</p>
+        <input type="text" :style="{width: '30ch'}" :value="receivedData && receivedData.visibility" readonly class="input is-small custom-margin" />  
         <p class="hide-on-tall-windows">Prevail. Wx</p> 
         <input type="text" :style="{ width: '10ch' }" :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin hide-on-tall-windows" />
-      </div>
-      <div class="rvr hide-on-short-windows" v-if="receivedData && receivedData.rvr && receivedData.rvr !== 'N/A'">
-        <p class= "first-p" v-if="receivedData && receivedData.rvr && receivedData.rvr !== 'N/A'">RVR</p>
-        <input type="text" v-if="receivedData && receivedData.rvr && receivedData.rvr !== 'N/A'" readonly class="input is-small custom-margin" :value="receivedData && receivedData.rvr"/> 
+        <p class= "first-p hide-on-short-windows">RVR</p>
+        <input type="text" readonly class="input is-small custom-margin hide-on-short-windows" :value="formattedRVR"/> 
       </div>
       <div class="wx hide-on-short-windows">
         <p class="first-p">WX</p>
-        <input type="text" readonly class="input is-small custom-margin" :value="formattedWeather"/> 
-        <p class= "first-p" v-if="receivedData && receivedData.clouds">CLD</p>
-        <input type="text" :value="receivedData && receivedData.clouds" readonly class="input is-small custom-margin" />                                                                              
+        <input type="text" readonly class="input is-small custom-margin" :value="formattedWeather"/>                                                                            
+      </div>
+      <div class="clouds hide-on-short-windows">
+        <p class= "first-p">CLD</p>
+        <input type="text" :value="receivedData && receivedData.clouds" readonly class="input is-small custom-margin" />   
       </div>
       <div class="temp hide-on-short-windows">
-        <p class= "first-p" v-if="receivedData && receivedData.temperature">T/DP</p>
+        <p class= "first-p">T/DP</p>
         <input type="text" :style="{ width: '15ch' }" :value="formattedTemp" readonly class="input is-small custom-margin" />
         <p>Prevail. Wx</p>
         <input type="text" :style="{ width: '10ch' }" :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin" />
@@ -66,12 +66,12 @@
       <h3 v-if="receivedData && receivedData.mmHg"> {{ receivedData.mmHg }} </h3>
     </div>
     <div class="supplementary column is-12 hide-on-short-windows">
-      <p v-if="receivedData && receivedData.sup">Supplementary Information</p>
-      <textarea v-if="receivedData && receivedData.sup" class="textarea is-small" rows="2" :value="receivedData.sup" ></textarea>
+      <p>Supplementary Information</p>
+      <textarea class="textarea is-small" rows="2" :value="receivedData.sup" ></textarea>
     </div>
     <div class="remark column is-12 ">
-      <p v-if="receivedData && receivedData.rmk">Remark</p>
-      <textarea v-if="receivedData && receivedData.rmk" class="textarea is-small" rows="2" :value="receivedData.rmk" ></textarea>
+      <p>Remark</p>
+      <textarea class="textarea is-small" rows="4" :value="receivedData.rmk" ></textarea>
     </div>
   </div>
 </template>
@@ -83,7 +83,7 @@ import io from 'socket.io-client';
 //const socket = io('http://192.168.1.100:3000');
 
 //laptop as server
-const socket = io('http://192.168.1.63:3000');
+const socket = io('http://192.168.1.151:3000');
 
   export default {
     data() {
@@ -133,9 +133,16 @@ const socket = io('http://192.168.1.63:3000');
         const dewPoint = this.receivedData.dewPoint ? `DP${this.receivedData.dewPoint.replace('C', '')}` : '';
         return `${temp} ${dewPoint}`.trim();
     },
+
     formattedWeather() {
     return this.receivedData.weather === 'N/A' ? '' : this.receivedData.weather;
-  }
+    },
+
+    formattedRVR(){
+      return this.receivedData.rvr === 'N/A' ? '' : this.receivedData.rvr;
+    }
+
+    
 
   },
 
@@ -157,7 +164,14 @@ const socket = io('http://192.168.1.63:3000');
    },
    getRightButtonLabel() {
        return this.receivedData && this.receivedData.atisRWY.startsWith('21') ? '21L' : '03R';
-   }
+   },
+
+   hasAtisWS() {
+    return this.receivedData && this.receivedData.atisWS && this.receivedData.atisWS !== 'N/A';
+  },
+  hasRcrContent() {
+    return this.receivedData && this.receivedData.rcrContent && this.receivedData.rcrContent !== 'N/A';
+  }
 
  }
   };
@@ -255,7 +269,7 @@ const socket = io('http://192.168.1.63:3000');
     display: flex;
     padding-bottom: 5px;
   }
-  .rvr{
+  .clouds{
     display: flex;
     padding-bottom: 5px;
   }
