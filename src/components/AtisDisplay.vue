@@ -1,7 +1,7 @@
 <template>
   <div class="columns is-mobile is-multiline">
     <div class="mandatory column is-8">
-      <h6 class="tag is-large is-light">VTBD - ARR ATIS</h6>
+      <h6 class="tag is-large is-light" :class="{'is-primary': isConnected, 'is-danger': !isConnected}">VTBD - ARR ATIS</h6>
         <div class="time">
           <p class= "first-p">TIME</p>
           <input type="text" :style="{ width: '8ch' }" :value="receivedData && receivedData.atisTime" readonly class="input is-small custom-margin" />
@@ -19,7 +19,7 @@
         <button :class="getRightButtonClass()">{{ getRightButtonLabel() }}</button>
         </div>
     </div>
-    <div class="info column is-4 box">
+    <div class="info column is-4 box" :class="{ 'flash-orange': flashInfo}">
       <h3 v-if="receivedData && receivedData.atisInfo"> {{ receivedData.atisInfo }} </h3>
     </div>
     <div class="optional column is-12">
@@ -32,7 +32,7 @@
         <textarea readonly class="textarea custom-rcr is-small custom-margin"  :class="{'is-warning': hasAtisWS()}" rows="2" :value="formattedRcrContent"></textarea>
       </div>
       <div class="wind hide-on-short-windows">
-        <p class= "first-p" v-if="receivedData && receivedData.windInfo">WIND</p>
+        <p class= "first-p">WIND</p>
         <input type="text" :value="receivedData && receivedData.windInfo" readonly class="input is-small custom-margin" />
       </div>     
       <div class="visibility">
@@ -58,11 +58,11 @@
         <input type="text" :style="{ width: '10ch' }" :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin" />
       </div>       
     </div>
-    <div class="qnh tile is-6 box">
+    <div class="qnh tile is-6 box" :class="{ 'flash-orange': flashQNH}">
       <h3 v-if="receivedData && receivedData.qnh"> {{ receivedData.qnh }} </h3>
     </div>
     <div class="space"></div>
-    <div class="mmHg tile is-6 box">
+    <div class="mmHg tile is-6 box" :class="{ 'flash-orange': flashmmHg}">
       <h3 v-if="receivedData && receivedData.mmHg"> {{ receivedData.mmHg }} </h3>
     </div>
     <div class="supplementary column is-12 hide-on-short-windows">
@@ -80,19 +80,31 @@
 
 import io from 'socket.io-client';        
 //desktop as server
-//const socket = io('http://192.168.1.100:3000');
-
+const socket = io('http://localhost:3000');
+//const socket = io(`http://${ip}:3000`);
 //laptop as server
-const socket = io('http://192.168.1.151:3000');
+//const socket = io('http://192.168.1.151:3000');
 
   export default {
     data() {
       return {
         //receivedData: null,
-        receivedData:{ atisRWY: '21'},
+        receivedData:{ atisRWY: '21'}, 
+        flashInfo: false,
+        flashQNH: false,
+        flashmmHg: false,
+        isConnected: false,
       };
     },
     mounted() {
+      socket.on('connect', () => {
+        this.isConnected = true;
+      });
+
+      socket.on('disconnect', () => {
+        this.isConnected = false;
+      });
+
       socket.on('updateData', (data) => {
         this.receivedData = data;
         console.log(this.receivedData);
@@ -145,33 +157,83 @@ const socket = io('http://192.168.1.151:3000');
     
 
   },
+  watch: {
+    'receivedData.atisInfo'(newVal, oldVal) {
+        if (newVal !== oldVal) {
+            this.flashInfo = true;
+            setTimeout(() => { this.flashInfo = false; }, 10000);
+        }
+    },
+    'receivedData.qnh'(newVal, oldVal) {
+        if (newVal !== oldVal) {
+            this.flashQNH = true;
+            this.playQNHSound();
+            setTimeout(() => { this.flashQNH = false; }, 10000);
+        }
+    },
+    'receivedData.mmHg'(newVal, oldVal) {
+        if (newVal !== oldVal) {
+            this.flashmmHg = true;
+            setTimeout(() => { this.flashmmHg = false; }, 10000);
+        }
+    },
+    'receivedData.prevailWx'(newVal) {
+        if (newVal === 'IMC') {
+            this.playIMCSound();
+        }
+        else if (newVal === 'VMC') {
+            this.playVMCSound();
+        }
+    },
 
+    // ... other watchers ...
+  },
     methods: {
    getLeftButtonClass() {
        if (this.receivedData && this.receivedData.atisRWY === '21' || this.receivedData && this.receivedData.atisRWY === '21R') return 'button is-success is-small custom-margin';
        if (this.receivedData && this.receivedData.atisRWY === '21L' || this.receivedData && this.receivedData.atisRWY === '03R') return 'button is-danger is-small custom-margin';
        if (this.receivedData && this.receivedData.atisRWY === '03' || this.receivedData && this.receivedData.atisRWY === '03L') return 'button is-success is-small custom-margin';
+       if (this.receivedData && this.receivedData.atisRWY ===  'CLSD') return 'button is-danger is-small custom-margin';
        return 'button is-small custom-margin';
    },
    getRightButtonClass() {
        if (this.receivedData && this.receivedData.atisRWY === '21' || this.receivedData && this.receivedData.atisRWY === '21L') return 'button is-success is-small custom-margin';
        if (this.receivedData && this.receivedData.atisRWY === '21R' || this.receivedData && this.receivedData.atisRWY === '03L') return 'button is-danger is-small custom-margin';
        if (this.receivedData && this.receivedData.atisRWY === '03' || this.receivedData && this.receivedData.atisRWY === '03R') return 'button is-success is-small custom-margin';
+       if (this.receivedData && this.receivedData.atisRWY ===  'CLSD') return 'button is-danger is-small custom-margin';
        return 'button is-small custom-margin';
    },
    getLeftButtonLabel() {
-       return this.receivedData && this.receivedData.atisRWY.startsWith('21') ? '21R' : '03L';
+       if (this.receivedData && this.receivedData.atisRWY === 'CLSD') 
+        return '21R';
+       else
+        return this.receivedData && this.receivedData.atisRWY.startsWith('21') ? '21R' : '03L';
    },
    getRightButtonLabel() {
-       return this.receivedData && this.receivedData.atisRWY.startsWith('21') ? '21L' : '03R';
+      if (this.receivedData && this.receivedData.atisRWY === 'CLSD') 
+        return '21L';
+      else
+        return this.receivedData && this.receivedData.atisRWY.startsWith('21') ? '21L' : '03R';
    },
 
    hasAtisWS() {
     return this.receivedData && this.receivedData.atisWS && this.receivedData.atisWS !== 'N/A';
   },
-  hasRcrContent() {
+   hasRcrContent() {
     return this.receivedData && this.receivedData.rcrContent && this.receivedData.rcrContent !== 'N/A';
-  }
+  },
+  playQNHSound() {
+    const audio = new Audio('QNH.WAV');
+    audio.play();
+  },
+  playIMCSound() {
+    const audio = new Audio('IMC.wav');
+    audio.play();
+  },
+  playVMCSound() {
+    const audio = new Audio('VMC.wav');
+    audio.play();
+  },
 
  }
   };
@@ -292,6 +354,15 @@ const socket = io('http://192.168.1.151:3000');
   .hide-on-tall-windows {
     display: none !important;
     }
+  }
+
+  @keyframes flash-orange {
+    0%, 100% { background-color: white; }
+    50% { background-color: orange; }
+  }
+
+  .flash-orange {
+    animation: flash-orange 1s 20; /* Run for 1 second and repeat twice */
   }
 
   html,body,header,footer{

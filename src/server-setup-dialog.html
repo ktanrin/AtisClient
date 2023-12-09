@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Server Setup</title>
+</head>
+<body>
+  <p>Enter the server IP address:<p>
+  <input type="text" id="serverIp">
+  <button id="okButton">OK</button>
+  <button id="cancelButton">Cancel</button>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('okButton').addEventListener('click', () => {
+      const serverIp = document.getElementById('serverIp').value;
+      ipcRenderer.send('server-ip-set', serverIp);
+      window.close();
+    });
+
+    document.getElementById('cancelButton').addEventListener('click', () => {
+      window.close();
+    });
+  </script>
+</body>
+</html>
