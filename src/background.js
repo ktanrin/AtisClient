@@ -4,6 +4,8 @@ import { app ,Menu , protocol, BrowserWindow ,dialog, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const fs = require('fs');
+const path = require('path');
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -19,11 +21,12 @@ async function createWindow() {
       
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+      nodeIntegration: true,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js'),
     }
   })
-
+  
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
@@ -35,27 +38,61 @@ async function createWindow() {
   }
 }
 
+let serverIp = 'localhost'; // Default or previously stored IP
+//let ip;
+let setupServerWin; // Reference to the setup server window
+
 function showServerSetupDialog() {
-  let win = new BrowserWindow({
-    width: 300,
-    height: 200,
+  if (!setupServerWin) {
+    setupServerWin = new BrowserWindow({
+    width: 330,
+    height: 150,
+    modal: true,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js'), 
     },
   });
 
-  win.on('closed', () => {
-    win = null;
+  setupServerWin.on('closed', () => {
+    setupServerWin = null;
   });
-
-  win.loadFile('./server-setup-dialog.html');
+  setupServerWin.webContents.openDevTools();
+  // setupServerWin.loadFile('..\\src\\server-setup-dialog.html');
+  let dialogPath = isDevelopment
+  ? `file://${path.join(__dirname, '..', 'public', 'server-setup-dialog.html')}`
+  : `file://${path.join(process.resourcesPath, 'app.asar.unpacked', 'server-setup-dialog.html')}`;
+  console.log('dialogPath', dialogPath);
+  setupServerWin.loadURL(dialogPath);
+  //setupServerWin.webContents.send('server-ip-updated', serverIp);
+  // ipcMain.on('close-dialog', (event) => {
+  //   if (setupServerWin) {
+  //     setupServerWin.close();
+  //     ipcMain.removeHandler('close-dialog'); // Remove the event handler
+  //   }
+  // });
+  }
+  else {
+    setupServerWin.focus();
+  }
 }
 
-ipcMain.on('server-ip-set', (event, serverIp) => {
-  console.log(serverIp); // Do something with the server IP
+ipcMain.on('server-ip-set', (event, ip) => {
+  serverIp = ip;
+  console.log('Server IP set to',serverIp); // Do something with the server IP
+  //showServerSetupDialog();
+  event.sender.send('server-ip-updated', serverIp);
   // Here you would store the IP and use it for your socket connection
+  
 });
+
+ipcMain.handle('get-server-ip', async () => {
+  console.log('get-server-ip',serverIp);
+  return serverIp;
+});
+
+
 
 
 // Modify the menu template to include the 'Setup Server' label
@@ -67,9 +104,19 @@ const menuTemplate = [
         label: 'Setup Server',
         click: () => showServerSetupDialog()
       },
+      {
+        label: 'DevTools',
+        accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+        click(item, focusedWindow) {
+        if (focusedWindow) focusedWindow.toggleDevTools();
+      }        
+      },
       // ...other menu items...
     ]
   },
+ 
+
+
   // ...other top-level menu items...
 ];
 
@@ -119,3 +166,18 @@ if (isDevelopment) {
     })
   }
 }
+
+ipcMain.handle('load-audio', async (event, fileName) => {
+  // Construct the path to the audio file
+  const filePath = path.join(app.getAppPath(), fileName);
+ 
+  try {
+    // Read the file as a buffer
+    const audioBuffer = fs.readFileSync(filePath);
+    // Return the buffer data
+    return audioBuffer;
+  } catch (error) {
+    console.error('Error loading audio file:', error);
+    throw error; // Propagate the error back to the renderer process
+  }
+ });

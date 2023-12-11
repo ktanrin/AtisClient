@@ -76,42 +76,46 @@
   </div>
 </template>
   
-  <script>
-
+<script>
 import io from 'socket.io-client';        
-//desktop as server
-const socket = io('http://localhost:3000');
-//const socket = io(`http://${ip}:3000`);
-//laptop as server
-//const socket = io('http://192.168.1.151:3000');
-
+//import { ref } from 'vue';
   export default {
     data() {
+      //const ip = ref(window.electron.getServerIp());
+      //ref serverIp = window.electron.getServerIp();
       return {
         //receivedData: null,
+        socket: null,
         receivedData:{ atisRWY: '21'}, 
         flashInfo: false,
         flashQNH: false,
         flashmmHg: false,
         isConnected: false,
+        serverIp: window.electron.getServerIp(),
       };
     },
-    mounted() {
-      socket.on('connect', () => {
-        this.isConnected = true;
-      });
 
-      socket.on('disconnect', () => {
-        this.isConnected = false;
-      });
+     mounted() {
+    this.setupServerConnection();
+    this.setupSocketListeners();
 
-      socket.on('updateData', (data) => {
-        this.receivedData = data;
-        console.log(this.receivedData);
-      });
+    // Listen for server IP updates
+    window.electron.on('server-ip-updated', async () => {
+    console.log('server-ip-updated event received');
+    const serverIp = await window.electron.getServerIp();
+    console.log('Received server IP:', serverIp);
+    
+    await this.setupServerConnection();
+    });
     },
     beforeUnmount() {
-      socket.off('updateData');
+    if (this.socket) {
+      this.socket.off('updateData');
+      this.socket.disconnect();
+      }
+
+    // Remove the event listener
+    window.electron.removeAllListeners('server-ip-updated');
     },
     
     computed: {
@@ -189,6 +193,41 @@ const socket = io('http://localhost:3000');
     // ... other watchers ...
   },
     methods: {
+
+      async setupServerConnection() {
+      try {
+        if (this.socket) {
+          this.socket.disconnect();
+        }
+
+        const serverIp = await window.electron.getServerIp();
+        console.log('renderer Server IP:', serverIp);
+
+        // Establish a new socket connection
+        this.socket = io(`http://${serverIp}:3000`);
+
+        this.setupSocketListeners(); // Re-setup listeners for the new socket
+      } catch (error) {
+        console.error('Error setting up server connection:', error);
+      }
+    },
+    setupSocketListeners() {
+      if (this.socket) {
+        this.socket.on('connect', () => {
+          this.isConnected = true;
+        });
+
+        this.socket.on('disconnect', () => {
+          this.isConnected = false;
+        });
+
+        this.socket.on('updateData', (data) => {
+          this.receivedData = data;
+          console.log(this.receivedData);
+        });
+      }
+    },
+
    getLeftButtonClass() {
        if (this.receivedData && this.receivedData.atisRWY === '21' || this.receivedData && this.receivedData.atisRWY === '21R') return 'button is-success is-small custom-margin';
        if (this.receivedData && this.receivedData.atisRWY === '21L' || this.receivedData && this.receivedData.atisRWY === '03R') return 'button is-danger is-small custom-margin';
@@ -222,17 +261,55 @@ const socket = io('http://localhost:3000');
    hasRcrContent() {
     return this.receivedData && this.receivedData.rcrContent && this.receivedData.rcrContent !== 'N/A';
   },
-  playQNHSound() {
-    const audio = new Audio('QNH.WAV');
-    audio.play();
+  async playQNHSound() {
+    let audioSrc;
+    if (process.env.NODE_ENV === 'development') {
+        audioSrc = 'QNH.WAV'; // Development path
+        this.playAudio(audioSrc);
+    } else {
+        // Use the exposed function from the preload script
+        const audioData = await window.electron.loadAudio('QNH.WAV');
+        if (audioData) {
+            const audioBlob = new Blob([new Uint8Array(audioData)], { type: 'audio/wav' });
+            audioSrc = URL.createObjectURL(audioBlob);
+            this.playAudio(audioSrc);
+        }
+    }
   },
-  playIMCSound() {
-    const audio = new Audio('IMC.wav');
-    audio.play();
+  async playIMCSound() {
+    let audioSrc;
+    if (process.env.NODE_ENV === 'development') {
+        audioSrc = 'IMC.wav'; // Development path
+        this.playAudio(audioSrc);
+    } else {
+        // Use the exposed function from the preload script
+        const audioData = await window.electron.loadAudio('IMC.wav');
+        if (audioData) {
+            const audioBlob = new Blob([new Uint8Array(audioData)], { type: 'audio/wav' });
+            audioSrc = URL.createObjectURL(audioBlob);
+            this.playAudio(audioSrc);
+        }
+    }
   },
-  playVMCSound() {
-    const audio = new Audio('VMC.wav');
-    audio.play();
+  async playVMCSound() {
+    let audioSrc;
+    if (process.env.NODE_ENV === 'development') {
+        audioSrc = 'VMC.wav'; // Development path
+        this.playAudio(audioSrc);
+    } else {
+        // Use the exposed function from the preload script
+        const audioData = await window.electron.loadAudio('VMC.wav');
+        if (audioData) {
+            const audioBlob = new Blob([new Uint8Array(audioData)], { type: 'audio/wav' });
+            audioSrc = URL.createObjectURL(audioBlob);
+            this.playAudio(audioSrc);
+        }
+    }
+  },
+  playAudio(src) {
+      const audio = new Audio(src);
+      console.log('Playing audio:', src);
+      audio.play().catch(e => console.error('Error playing sound:', e));
   },
 
  }

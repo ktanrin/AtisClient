@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Server Setup</title>
+</head>
+<body>
+  <p>Enter the server IP address:<p>
+  <input type="text" id="serverIp">
+  <button id="okButton">OK</button>
+  <button id="cancelButton">Cancel</button>
+
+  <script>
+  // All of the Node.js APIs are available in the preload process.
+   document.getElementById('okButton').addEventListener('click', () => {
+    const serverIp = document.getElementById('serverIp').value;
+    window.electron.sendServerIp(serverIp); // use the exposed 'send' method
+    window.electron.requestCloseDialog();
+    window.close();
+  });
+
+  document.getElementById('cancelButton').addEventListener('click', () => {
+    window.close();
+  });
+  </script>
+</body>
+</html>
