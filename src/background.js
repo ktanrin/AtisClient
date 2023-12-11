@@ -26,7 +26,7 @@ async function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
     }
   })
-  
+  //console.log('preload ',path.join(__dirname, 'preload.js') );
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
@@ -54,24 +54,18 @@ function showServerSetupDialog() {
       preload: path.join(__dirname, 'preload.js'), 
     },
   });
-
+  //console.log('preload ',path.join(__dirname, 'preload.js') );
   setupServerWin.on('closed', () => {
     setupServerWin = null;
   });
-  setupServerWin.webContents.openDevTools();
+  //setupServerWin.webContents.openDevTools();
   // setupServerWin.loadFile('..\\src\\server-setup-dialog.html');
   let dialogPath = isDevelopment
   ? `file://${path.join(__dirname, '..', 'public', 'server-setup-dialog.html')}`
   : `file://${path.join(process.resourcesPath, 'app.asar.unpacked', 'server-setup-dialog.html')}`;
   console.log('dialogPath', dialogPath);
   setupServerWin.loadURL(dialogPath);
-  //setupServerWin.webContents.send('server-ip-updated', serverIp);
-  // ipcMain.on('close-dialog', (event) => {
-  //   if (setupServerWin) {
-  //     setupServerWin.close();
-  //     ipcMain.removeHandler('close-dialog'); // Remove the event handler
-  //   }
-  // });
+ 
   }
   else {
     setupServerWin.focus();
@@ -84,7 +78,9 @@ ipcMain.on('server-ip-set', (event, ip) => {
   //showServerSetupDialog();
   event.sender.send('server-ip-updated', serverIp);
   // Here you would store the IP and use it for your socket connection
-  
+  BrowserWindow.getAllWindows().forEach(window => {
+    window.webContents.send('server-ip-updated', serverIp);
+  });
 });
 
 ipcMain.handle('get-server-ip', async () => {

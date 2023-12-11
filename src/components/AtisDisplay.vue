@@ -162,6 +162,13 @@ import io from 'socket.io-client';
 
   },
   watch: {
+
+    serverIp(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.serverIp = newVal;
+        //this.setupServerConnection();
+      }
+    },
     'receivedData.atisInfo'(newVal, oldVal) {
         if (newVal !== oldVal) {
             this.flashInfo = true;
@@ -200,13 +207,13 @@ import io from 'socket.io-client';
           this.socket.disconnect();
         }
 
-        const serverIp = await window.electron.getServerIp();
-        console.log('renderer Server IP:', serverIp);
+         // Get the updated server IP
+        this.serverIp = await window.electron.getServerIp();
+        console.log('Attempting to connect to server IP:', this.serverIp);
 
         // Establish a new socket connection
-        this.socket = io(`http://${serverIp}:3000`);
-
-        this.setupSocketListeners(); // Re-setup listeners for the new socket
+        this.socket = io(`http://${this.serverIp}:3000`);
+        this.setupSocketListeners();
       } catch (error) {
         console.error('Error setting up server connection:', error);
       }
