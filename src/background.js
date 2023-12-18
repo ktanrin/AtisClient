@@ -163,6 +163,18 @@ if (isDevelopment) {
   }
 }
 
+ipcMain.on('toggle-window-size', (event) => {
+  let win = BrowserWindow.getFocusedWindow();
+  if (win) {
+    const [width, height] = win.getSize();
+    if (height === 490) {
+      win.setSize(510, 850);
+    } else {
+      win.setSize(510, 490);
+    }
+  }
+});
+
 ipcMain.handle('load-audio', async (event, fileName) => {
   // Construct the path to the audio file
   const filePath = path.join(app.getAppPath(), fileName);

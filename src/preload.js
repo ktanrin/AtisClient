@@ -4,6 +4,7 @@ const fs = require('fs');
 
 
 contextBridge.exposeInMainWorld('electron', {
+    
     send: (channel, data) => {
         ipcRenderer.send(channel, data);
     },
@@ -34,5 +35,8 @@ contextBridge.exposeInMainWorld('electron', {
     },
     requestCloseDialog: () => ipcRenderer.send('close-dialog'),
     getServerIp: () => ipcRenderer.invoke('get-server-ip'),
-    loadAudio: (fileName) => ipcRenderer.invoke('load-audio', fileName)
+    loadAudio: (fileName) => ipcRenderer.invoke('load-audio', fileName),
+    toggleWindowSize: () => ipcRenderer.send('toggle-window-size')
+
+    
 });

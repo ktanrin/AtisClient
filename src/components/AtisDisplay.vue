@@ -1,7 +1,7 @@
 <template>
   <div class="columns is-mobile is-multiline">
     <div class="mandatory column is-8">
-      <h6 class="tag is-large is-light" :class="{'is-primary': isConnected, 'is-danger': !isConnected}">VTBD - ARR ATIS</h6>
+      <h6 class="tag is-large is-light" :class="{'is-primary': isConnected, 'is-danger': !isConnected}" @click="toggleWindowSize">VTBD - ARR ATIS</h6>
         <div class="time">
           <p class= "first-p">TIME</p>
           <input type="text" :style="{ width: '8ch' }" :value="receivedData && receivedData.atisTime" readonly class="input is-small custom-margin" />
@@ -200,6 +200,9 @@ import io from 'socket.io-client';
     // ... other watchers ...
   },
     methods: {
+      toggleWindowSize() {
+    window.electron.toggleWindowSize();
+  },
 
       async setupServerConnection() {
       try {
@@ -349,6 +352,13 @@ import io from 'socket.io-client';
   }
   h3, .tag{
     font-weight: bold !important;
+    
+  }
+  p{
+    font-weight: 800;
+  }
+   input, textarea{
+    font-weight: bold !important;
   }
   .time{
     display: flex;
@@ -362,7 +372,6 @@ import io from 'socket.io-client';
     
     min-width: 5ch !important;
     width: 5ch !important;
-    
   }
   
   .RWY{
