@@ -37,9 +37,26 @@
       </div>     
       <div class="visibility">
         <p class= "first-p">VIS</p>
-        <input type="text" :style="{width: '30ch'}" :value="receivedData && receivedData.visibility" readonly class="input is-small custom-margin" />  
+        <input type="text" 
+        
+        :style="receivedData.prevailWx === 'VMC' ? { 'width': '30ch' } : { 'width': '24ch' }" 
+        :value="receivedData && receivedData.visibility" 
+        readonly 
+        class="input is-small custom-margin" />  
         <p class="hide-on-tall-windows">Prevail. Wx</p> 
-        <input type="text" :style="{ width: '10ch' }" :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin hide-on-tall-windows" />
+        <input type="text"  
+        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '6ch' } : { 'width': '8ch' }]" 
+        :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin hide-on-tall-windows" 
+        :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"
+        />
+        <input type="text" 
+        v-if="receivedData.prevailWx === 'IMC'"
+        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '8ch' } : { 'width': '8ch' }]"
+        :value="receivedData && receivedData.prevailVis" 
+        readonly 
+        class="input is-small custom-margin hide-on-tall-windows"
+        :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"
+        />
         <p class= "first-p hide-on-short-windows">RVR</p>
         <input type="text" readonly class="input is-small custom-margin hide-on-short-windows" :value="formattedRVR"/> 
       </div>
@@ -55,7 +72,18 @@
         <p class= "first-p">T/DP</p>
         <input type="text" :style="{ width: '15ch' }" :value="formattedTemp" readonly class="input is-small custom-margin" />
         <p>Prevail. Wx</p>
-        <input type="text" :style="{ width: '10ch' }" :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin" />
+        <input type="text" 
+        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '10ch' } : { 'width': '10ch' }]" 
+        :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin" 
+        :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"/>
+        <input type="text" 
+        v-if="receivedData.prevailWx === 'IMC'"
+        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '10ch' } : { 'width': '10ch' }]"
+        :value="receivedData && receivedData.prevailVis" 
+        readonly 
+        class="input is-small custom-margin"
+        :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"
+        />
       </div>       
     </div>
     <div class="qnh tile is-6 box" :class="{ 'flash-orange': flashQNH}">
@@ -437,6 +465,7 @@ import io from 'socket.io-client';
   }
   .supplementary{
     text-align: left;
+    padding-bottom: 0 !important;
   }
   @media screen and (max-height: 450px) {
   .hide-on-short-windows {
