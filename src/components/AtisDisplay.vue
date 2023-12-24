@@ -8,7 +8,7 @@
           <p>MET AT</p>
           <input type="text" :style="{ width: '8ch' }" :value="receivedData && receivedData.metReportTime" readonly class="input is-small custom-margin" />
         </div>
-        <div class="apch">
+        <div class="apch" v-show="isVisible">
         <p class= "first-p" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'">APCH</p>
         <input type="text" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'" :value="receivedData && receivedData.appType" readonly class="input is-small custom-margin" />
         </div>
@@ -113,6 +113,7 @@ import io from 'socket.io-client';
       //ref serverIp = window.electron.getServerIp();
       return {
         //receivedData: null,
+        isVisible: false,
         socket: null,
         receivedData:{ atisRWY: '21'}, 
         flashInfo: false,
@@ -488,6 +489,6 @@ import io from 'socket.io-client';
   }
 
   html,body,header,footer{
-  background-color: lightskyblue !important;
+  background-color: lemonchiffon !important;
   }
   </style>
