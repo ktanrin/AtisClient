@@ -167,10 +167,10 @@ ipcMain.on('toggle-window-size', (event) => {
   let win = BrowserWindow.getFocusedWindow();
   if (win) {
     const [width, height] = win.getSize();
-    if (height === 490) {
+    if (height === 520) {
       win.setSize(510, 850);
     } else {
-      win.setSize(510, 490);
+      win.setSize(510, 520);
     }
   }
 });

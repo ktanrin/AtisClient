@@ -8,7 +8,7 @@
           <p>MET AT</p>
           <input type="text" :style="{ width: '8ch' }" :value="receivedData && receivedData.metReportTime" readonly class="input is-small custom-margin" />
         </div>
-        <div class="apch" v-show="isVisible">
+        <div class="apch" :style="{ visibility: 'hidden' }">
         <p class= "first-p" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'">APCH</p>
         <input type="text" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'" :value="receivedData && receivedData.appType" readonly class="input is-small custom-margin" />
         </div>
@@ -268,30 +268,30 @@ import io from 'socket.io-client';
     },
 
    getLeftButtonClass() {
-       if (this.receivedData && this.receivedData.atisRWY === '21' || this.receivedData && this.receivedData.atisRWY === '21R') return 'button is-success is-small custom-margin';
-       if (this.receivedData && this.receivedData.atisRWY === '21L' || this.receivedData && this.receivedData.atisRWY === '03R') return 'button is-danger is-small custom-margin';
+       if (this.receivedData && this.receivedData.atisRWY === '21' || this.receivedData && this.receivedData.atisRWY === '21L') return 'button is-success is-small custom-margin';
+       if (this.receivedData && this.receivedData.atisRWY === '21R' || this.receivedData && this.receivedData.atisRWY === '03R') return 'button is-danger is-small custom-margin';
        if (this.receivedData && this.receivedData.atisRWY === '03' || this.receivedData && this.receivedData.atisRWY === '03L') return 'button is-success is-small custom-margin';
        if (this.receivedData && this.receivedData.atisRWY ===  'CLSD') return 'button is-danger is-small custom-margin';
        return 'button is-small custom-margin';
    },
    getRightButtonClass() {
-       if (this.receivedData && this.receivedData.atisRWY === '21' || this.receivedData && this.receivedData.atisRWY === '21L') return 'button is-success is-small custom-margin';
-       if (this.receivedData && this.receivedData.atisRWY === '21R' || this.receivedData && this.receivedData.atisRWY === '03L') return 'button is-danger is-small custom-margin';
+       if (this.receivedData && this.receivedData.atisRWY === '21' || this.receivedData && this.receivedData.atisRWY === '21R') return 'button is-success is-small custom-margin';
+       if (this.receivedData && this.receivedData.atisRWY === '21L' || this.receivedData && this.receivedData.atisRWY === '03L') return 'button is-danger is-small custom-margin';
        if (this.receivedData && this.receivedData.atisRWY === '03' || this.receivedData && this.receivedData.atisRWY === '03R') return 'button is-success is-small custom-margin';
        if (this.receivedData && this.receivedData.atisRWY ===  'CLSD') return 'button is-danger is-small custom-margin';
        return 'button is-small custom-margin';
    },
    getLeftButtonLabel() {
        if (this.receivedData && this.receivedData.atisRWY === 'CLSD') 
-        return '21R';
+        return '21L';
        else
-        return this.receivedData && this.receivedData.atisRWY.startsWith('21') ? '21R' : '03L';
+        return this.receivedData && this.receivedData.atisRWY.startsWith('21') ? '21L' : '03L';
    },
    getRightButtonLabel() {
       if (this.receivedData && this.receivedData.atisRWY === 'CLSD') 
-        return '21L';
+        return '21R';
       else
-        return this.receivedData && this.receivedData.atisRWY.startsWith('21') ? '21L' : '03R';
+        return this.receivedData && this.receivedData.atisRWY.startsWith('21') ? '21R' : '03R';
    },
 
    hasAtisWS() {
@@ -356,6 +356,12 @@ import io from 'socket.io-client';
   </script>
   
   <style >
+  .button{
+    font-size: 100%;
+    font-weight: bold;
+    color: #2c3e50 !important;
+    border: solid 1px #2c3e50 !important;
+  }
   .mandatory{
     padding-bottom: 0 !important;
     padding-left: 0 !important;
@@ -468,12 +474,12 @@ import io from 'socket.io-client';
     text-align: left;
     padding-bottom: 0 !important;
   }
-  @media screen and (max-height: 450px) {
+  @media screen and (max-height: 470px) {
   .hide-on-short-windows {
     display: none !important;
     }
   }
-  @media screen and (min-height: 451px) {
+  @media screen and (min-height: 471px) {
   .hide-on-tall-windows {
     display: none !important;
     }

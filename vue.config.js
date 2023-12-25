@@ -6,6 +6,9 @@ module.exports = defineConfig({
     electronBuilder: {
       preload: 'src/preload.js',
       builderOptions: {
+        win: {
+          icon: 'src/assets/icon.png'
+        },
         asarUnpack: ['server-setup-dialog.html'],
         // This is where you can configure Electron Builder to package additional files
         extraFiles: [
