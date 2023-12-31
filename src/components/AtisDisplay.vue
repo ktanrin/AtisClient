@@ -87,10 +87,12 @@
       </div>       
     </div>
     <div class="qnh tile is-6 box" :class="{ 'flash-orange': flashQNH}">
+      <div v-if="flashQNH" class="old-value-box">{{ oldQNH }}</div>
       <h3 v-if="receivedData && receivedData.qnh"> {{ receivedData.qnh }} </h3>
     </div>
     <div class="space"></div>
     <div class="mmHg tile is-6 box" :class="{ 'flash-orange': flashmmHg}">
+      <div v-if="flashmmHg" class="old-value-box">{{ oldmmHg }}</div>
       <h3 v-if="receivedData && receivedData.mmHg"> {{ receivedData.mmHg }} </h3>
     </div>
     <div class="supplementary column is-12 hide-on-short-windows">
@@ -113,7 +115,8 @@ import io from 'socket.io-client';
       //ref serverIp = window.electron.getServerIp();
       return {
         //receivedData: null,
-        isVisible: false,
+        oldQNH: null,
+        oldmmHg: null,
         socket: null,
         receivedData:{ atisRWY: '21'}, 
         flashInfo: false,
@@ -206,6 +209,7 @@ import io from 'socket.io-client';
     },
     'receivedData.qnh'(newVal, oldVal) {
         if (newVal !== oldVal) {
+            this.oldQNH = oldVal;
             this.flashQNH = true;
             this.playQNHSound();
             setTimeout(() => { this.flashQNH = false; }, 10000);
@@ -213,6 +217,7 @@ import io from 'socket.io-client';
     },
     'receivedData.mmHg'(newVal, oldVal) {
         if (newVal !== oldVal) {
+            this.oldmmHg = oldVal;
             this.flashmmHg = true;
             setTimeout(() => { this.flashmmHg = false; }, 10000);
         }
@@ -356,6 +361,18 @@ import io from 'socket.io-client';
   </script>
   
   <style >
+  .old-value-box {
+  position: absolute; /* Position it relative to the parent */
+  top: 0;
+  right: 0;
+  background-color: #fff; /* You can change the background color */
+  padding: 2px 5px; /* Small padding for the text */
+  border: 1px solid #ccc; /* Optional border */
+  border-bottom-left-radius: 4px; /* Rounded corner for aesthetics */
+  font-size: 0.75rem; /* Smaller font size */
+  z-index: 10; /* Ensure it's above other content */
+}
+
   .button{
     font-size: 100%;
     font-weight: bold;
@@ -378,6 +395,7 @@ import io from 'socket.io-client';
     border: solid 1px black;
   }
   .qnh , .mmHg{
+    position: relative;
     font-size: 500%;
     font-weight: bold;
     margin-bottom: 0 !important;
