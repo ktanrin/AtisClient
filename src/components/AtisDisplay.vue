@@ -8,11 +8,7 @@
           <p>MET AT</p>
           <input type="text" :style="{ width: '7ch' }" :value="receivedData && receivedData.metReportTime" readonly class="input is-small custom-margin" />
         </div>
-<<<<<<< HEAD
-        <div class="apch" :style="{ visibility: 'hidden' }">
-=======
         <div class="apch">
->>>>>>> parent of ff071ff (departure branch)
         <p class= "first-p" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'">APCH</p>
         <input type="text" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'" :value="receivedData && receivedData.appType" readonly class="input is-small custom-margin" />
         </div>
@@ -122,11 +118,8 @@ import io from 'socket.io-client';
       //ref serverIp = window.electron.getServerIp();
       return {
         //receivedData: null,
-<<<<<<< HEAD
         oldQNH: null,
         oldmmHg: null,
-=======
->>>>>>> parent of ff071ff (departure branch)
         socket: null,
         receivedData:{ atisRWY: '21'}, 
         flashInfo: false,
