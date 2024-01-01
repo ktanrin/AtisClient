@@ -4,9 +4,9 @@
       <h6 class="tag is-large is-light" :class="{'is-primary': isConnected, 'is-danger': !isConnected}" @click="toggleWindowSize">VTBD - ARR ATIS</h6>
         <div class="time">
           <p class= "first-p">TIME</p>
-          <input type="text" :style="{ width: '8ch' }" :value="receivedData && receivedData.atisTime" readonly class="input is-small custom-margin" />
+          <input type="text" :style="{ width: '7ch' }" :value="receivedData && receivedData.atisTime" readonly class="input is-small custom-margin" />
           <p>MET AT</p>
-          <input type="text" :style="{ width: '8ch' }" :value="receivedData && receivedData.metReportTime" readonly class="input is-small custom-margin" />
+          <input type="text" :style="{ width: '7ch' }" :value="receivedData && receivedData.metReportTime" readonly class="input is-small custom-margin" />
         </div>
         <div class="apch" :style="{ visibility: 'hidden' }">
         <p class= "first-p" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'">APCH</p>
@@ -39,19 +39,19 @@
         <p class= "first-p">VIS</p>
         <input type="text" 
         
-        :style="receivedData.prevailWx === 'VMC' ? { 'width': '30ch' } : { 'width': '24ch' }" 
+        :style="receivedData.prevailWx === 'VMC' ? { 'width': '20ch' } : { 'width': '15ch' }" 
         :value="receivedData && receivedData.visibility" 
         readonly 
         class="input is-small custom-margin" />  
         <p class="hide-on-tall-windows">Prevail. Wx</p> 
         <input type="text"  
-        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '6ch' } : { 'width': '8ch' }]" 
+        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '4ch' } : { 'width': '6ch' }]" 
         :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin hide-on-tall-windows" 
         :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"
         />
         <input type="text" 
         v-if="receivedData.prevailWx === 'IMC'"
-        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '8ch' } : { 'width': '8ch' }]"
+        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '6ch' } : { 'width': '6ch' }]"
         :value="receivedData && receivedData.prevailVis" 
         readonly 
         class="input is-small custom-margin hide-on-tall-windows"
@@ -70,15 +70,15 @@
       </div>
       <div class="temp hide-on-short-windows">
         <p class= "first-p">T/DP</p>
-        <input type="text" :style="{ width: '15ch' }" :value="formattedTemp" readonly class="input is-small custom-margin" />
+        <input type="text" :style="{ width: '12ch' }" :value="formattedTemp" readonly class="input is-small custom-margin" />
         <p>Prevail. Wx</p>
         <input type="text" 
-        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '10ch' } : { 'width': '10ch' }]" 
+        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '4ch' } : { 'width': '5ch' }]" 
         :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin" 
         :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"/>
         <input type="text" 
         v-if="receivedData.prevailWx === 'IMC'"
-        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '10ch' } : { 'width': '10ch' }]"
+        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '7ch' } : { 'width': '7ch' }]"
         :value="receivedData && receivedData.prevailVis" 
         readonly 
         class="input is-small custom-margin"
@@ -99,9 +99,12 @@
       <p>Supplementary Information</p>
       <textarea class="textarea is-small" rows="2" :value="receivedData.sup" ></textarea>
     </div>
-    <div class="remark column is-12 ">
+    <div class="remark column is-12 hide-on-short-windows">
       <p>Remark</p>
-      <textarea class="textarea is-small" rows="4" :value="receivedData.rmk" ></textarea>
+      <textarea  class="textarea is-small" rows="4" :value="receivedData.rmk" ></textarea>
+    </div><div class="remark column is-12 hide-on-tall-windows">
+      <p>Remark</p>
+      <textarea  class="textarea is-small" rows="3" :value="receivedData.rmk" ></textarea>
     </div>
   </div>
 </template>
@@ -361,31 +364,28 @@ import io from 'socket.io-client';
   </script>
   
   <style >
+
+
   .old-value-box {
-  position: absolute; /* Position it relative to the parent */
-  top: 0;
-  right: 0;
-  background-color: #fff; /* You can change the background color */
-  padding: 2px 5px; /* Small padding for the text */
-  border: 1px solid #ccc; /* Optional border */
-  border-bottom-left-radius: 4px; /* Rounded corner for aesthetics */
-  font-size: 0.75rem; /* Smaller font size */
-  z-index: 10; /* Ensure it's above other content */
+    position: absolute; /* Position it relative to the parent */
+    font-size: 0.2em !important;
+    top: 0;
+    right: 0;
+    background-color: #fff; /* You can change the background color */
+    padding-left: 1em;
+    padding-right: 1em;
+    color: darkblue;
+    z-index: 10; /* Ensure it's above other content */
 }
 
-  .button{
-    font-size: 100%;
-    font-weight: bold;
-    color: #2c3e50 !important;
-    border: solid 1px #2c3e50 !important;
-  }
+  
   .mandatory{
     padding-bottom: 0 !important;
     padding-left: 0 !important;
     padding-top: 0 !important;
   }
   .info{
-    font-size: 600%;
+    font-size: 6em;
     font-weight: bold;
     padding-bottom: 0 !important;
     padding-left: 0 !important;
@@ -396,7 +396,7 @@ import io from 'socket.io-client';
   }
   .qnh , .mmHg{
     position: relative;
-    font-size: 500%;
+    font-size: 5em;
     font-weight: bold;
     margin-bottom: 0 !important;
     border: solid 1px black;
@@ -409,9 +409,30 @@ import io from 'socket.io-client';
   }
   p{
     font-weight: 800;
+    font-size: medium;
   }
-   input, textarea{
+
+  .button{
+
+    font-weight: bold;
+    color: #2c3e50 !important;
+    border: solid 1px #2c3e50 !important;
+    line-height: 1.4 !important;
+    height: auto !important;
+    font-size: 1.1em !important;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+  }
+
+   input, textarea , select{
     font-weight: bold !important;
+    padding-left: 0.2em !important;
+    padding-right: 1px !important;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+    font-size: 1.1em !important;
+    line-height: 1.4 !important;
+    height: auto !important;
   }
   .time{
     display: flex;
@@ -508,7 +529,7 @@ import io from 'socket.io-client';
     50% { background-color: orange; }
   }
 
-  .flash-orange {
+  .flash-orange { 
     animation: flash-orange 1s 20; /* Run for 1 second and repeat twice */
   }
 
