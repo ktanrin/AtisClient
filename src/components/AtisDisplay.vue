@@ -385,7 +385,8 @@ import io from 'socket.io-client';
     padding-top: 0 !important;
   }
   .info{
-    font-size: 6em;
+    line-height: 1 !important;
+    font-size: 8.6em;
     font-weight: bold;
     padding-bottom: 0 !important;
     padding-left: 0 !important;
