@@ -7,6 +7,32 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const fs = require('fs');
 const path = require('path');
 
+const settingsFilePath = path.join(app.getPath('userData'), 'settings.json');
+console.log('settingsFilePath',settingsFilePath);
+
+function loadServerIp() {
+  try {
+    if (fs.existsSync(settingsFilePath)) {
+      const data = fs.readFileSync(settingsFilePath, 'utf8');
+      const settings = JSON.parse(data);
+      return settings.serverIp || 'localhost';
+    }
+  } catch (error) {
+    console.error('Error reading the settings file:', error);
+  }
+  return 'localhost'; // Default value if the file doesn't exist or can't be read
+}
+
+function saveServerIp(ipAddress) {
+  try {
+    const settings = { serverIp: ipAddress };
+    fs.writeFileSync(settingsFilePath, JSON.stringify(settings, null, 2), 'utf8');
+  } catch (error) {
+    console.error('Error writing to the settings file:', error);
+  }
+}
+
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -38,7 +64,7 @@ async function createWindow() {
   }
 }
 
-let serverIp = 'localhost'; // Default or previously stored IP
+let serverIp = loadServerIp(); // Default or previously stored IP
 //let ip;
 let setupServerWin; // Reference to the setup server window
 
@@ -74,6 +100,7 @@ function showServerSetupDialog() {
 
 ipcMain.on('server-ip-set', (event, ip) => {
   serverIp = ip;
+  saveServerIp(ip);
   console.log('Server IP set to',serverIp); // Do something with the server IP
   //showServerSetupDialog();
   event.sender.send('server-ip-updated', serverIp);
