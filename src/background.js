@@ -41,8 +41,8 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 510,
-    height: 850,
+    width: 530,
+    height: 860,
     webPreferences: {
       
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -195,9 +195,9 @@ ipcMain.on('toggle-window-size', (event) => {
   if (win) {
     const [width, height] = win.getSize();
     if (height === 520) {
-      win.setSize(510, 850);
+      win.setSize(530, 860);
     } else {
-      win.setSize(510, 520);
+      win.setSize(530, 520);
     }
   }
 });
