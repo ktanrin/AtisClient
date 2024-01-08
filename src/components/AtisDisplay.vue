@@ -8,11 +8,7 @@
           <p>MET AT</p>
           <input type="text" :style="{ width: '7ch' }" :value="receivedData && receivedData.metReportTime" readonly class="input is-small custom-margin" />
         </div>
-<<<<<<< HEAD
-        <div class="apch">
-=======
         <div class="apch" :style="{ visibility: 'hidden' }">
->>>>>>> parent of f1d7a79 (check)
         <p class= "first-p" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'">APCH</p>
         <input type="text" v-show="receivedData && receivedData.appType && receivedData.appType.toLowerCase() !== 'n/a'" :value="receivedData && receivedData.appType" readonly class="input is-small custom-margin" />
         </div>
