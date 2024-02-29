@@ -8,19 +8,19 @@ const fs = require('fs');
 const path = require('path');
 
 const settingsFilePath = path.join(app.getPath('userData'), 'settings.json');
-console.log('settingsFilePath',settingsFilePath);
+//console.log('settingsFilePath',settingsFilePath);
 
 function loadServerIp() {
   try {
     if (fs.existsSync(settingsFilePath)) {
       const data = fs.readFileSync(settingsFilePath, 'utf8');
       const settings = JSON.parse(data);
-      return settings.serverIp || 'localhost';
+      return settings.serverIp || '10.4.120.131';
     }
   } catch (error) {
     console.error('Error reading the settings file:', error);
   }
-  return 'localhost'; // Default value if the file doesn't exist or can't be read
+  return '10.4.120.131'; // Default value if the file doesn't exist or can't be read
 }
 
 function saveServerIp(ipAddress) {

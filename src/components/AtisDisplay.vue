@@ -250,9 +250,9 @@ import io from 'socket.io-client';
          // Get the updated server IP
         this.serverIp = await window.electron.getServerIp();
         console.log('Attempting to connect to server IP:', this.serverIp);
-
+        console.log('receivedData:', this.receivedData);
         // Establish a new socket connection
-        this.socket = io(`http://${this.serverIp}:3000`);
+        this.socket = io(`http://${this.serverIp}:1150`);
         this.setupSocketListeners();
       } catch (error) {
         console.error('Error setting up server connection:', error);
