@@ -252,7 +252,7 @@ import io from 'socket.io-client';
         console.log('Attempting to connect to server IP:', this.serverIp);
 
         // Establish a new socket connection
-        this.socket = io(`http://${this.serverIp}:3000`);
+        this.socket = io(`http://${this.serverIp}:1250`);
         this.setupSocketListeners();
       } catch (error) {
         console.error('Error setting up server connection:', error);
