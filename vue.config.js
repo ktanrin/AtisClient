@@ -18,6 +18,13 @@ module.exports = defineConfig({
             to: 'server-setup-dialog.html', // Copies the file to the root of the packaged app
           },
         ],
+         // NSIS specific configuration
+         nsis: {
+          oneClick: false, // User must click through the installer
+          allowToChangeInstallationDirectory: true, // Allow user to select install location
+          perMachine: true, // Install for all users (requires elevation)
+          // Include other NSIS options as needed
+        },
       },
     },
   },
