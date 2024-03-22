@@ -45,17 +45,17 @@
         class="input is-small custom-margin" />  
         <p class="hide-on-tall-windows">Prevail. Wx</p> 
         <input type="text"  
-        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '4ch' } : { 'width': '6ch' }]" 
+        :style="[receivedData.prevailWx === 'IMC' ? { 'color': 'crimson', 'width': '4ch' } : { 'width': '6ch' }]" 
         :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin hide-on-tall-windows" 
-        :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"
+        :class="{ 'is-danger': receivedData.prevailWx === 'IMC' }"
         />
         <input type="text" 
         v-if="receivedData.prevailWx === 'IMC'"
-        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '6ch' } : { 'width': '6ch' }]"
+        :style="[receivedData.prevailWx === 'IMC' ? { 'color': 'crimson', 'width': '6ch' } : { 'width': '6ch' }]"
         :value="receivedData && receivedData.prevailVis" 
         readonly 
         class="input is-small custom-margin hide-on-tall-windows"
-        :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"
+        :class="{ 'is-danger': receivedData.prevailWx === 'IMC' }"
         />
         <p class= "first-p hide-on-short-windows">RVR</p>
         <input type="text" readonly class="input is-small custom-margin hide-on-short-windows" :value="formattedRVR"/> 
@@ -73,16 +73,16 @@
         <input type="text" :style="{ width: '12ch' }" :value="formattedTemp" readonly class="input is-small custom-margin" />
         <p>Prevail. Wx</p>
         <input type="text" 
-        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '4ch' } : { 'width': '5ch' }]" 
+        :style="[receivedData.prevailWx === 'IMC' ? { 'color': 'crimson', 'width': '4ch' } : { 'width': '5ch' }]" 
         :value="receivedData && receivedData.prevailWx" readonly class="input is-small custom-margin" 
-        :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"/>
+        :class="{ 'is-danger': receivedData.prevailWx === 'IMC' }"/>
         <input type="text" 
         v-if="receivedData.prevailWx === 'IMC'"
-        :style="[receivedData.prevailWx === 'IMC' ? { 'background-color': 'lightgoldenrodyellow', 'width': '7ch' } : { 'width': '7ch' }]"
+        :style="[receivedData.prevailWx === 'IMC' ? { 'color': 'crimson', 'width': '7ch' } : { 'width': '7ch' }]"
         :value="receivedData && receivedData.prevailVis" 
         readonly 
         class="input is-small custom-margin"
-        :class="{ 'is-warning': receivedData.prevailWx === 'IMC' }"
+        :class="{ 'is-danger': receivedData.prevailWx === 'IMC' }"
         />
       </div>       
     </div>
