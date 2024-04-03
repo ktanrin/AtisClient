@@ -1,7 +1,7 @@
 <template>
   <div class="columns is-mobile is-multiline">
     <div class="mandatory column is-8">
-      <h6 class="tag is-large is-light" :class="{'is-primary': isConnected, 'is-danger': !isConnected}" @click="toggleWindowSize">VTBD - ARR ATIS</h6>
+      <h6 class="tag is-large is-light" :class="{'is-primary': isConnected, 'is-danger': !isConnected}" @click="toggleWindowSize">VTBD - DEP ATIS</h6>
         <div class="time">
           <p class= "first-p">TIME</p>
           <input type="text" :style="{ width: '7ch' }" :value="receivedData && receivedData.atisTime" readonly class="input is-small custom-margin" />
